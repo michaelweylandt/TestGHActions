@@ -88,6 +88,7 @@ jobs:
           path: check
 
       - name: Run coverage
+        if: matrix.config.os == 'macOS-latest' && matrix.config.r == '3.6'
         runs-on: macOS-latest
         run: |
            remotes::install_cran('covr')
@@ -99,6 +100,7 @@ jobs:
         shell: Rscript {0}
 
       - name: Clean up build artifacts and render pkgdown site
+        if: matrix.config.os == 'ubuntu-16.04'
         runs-on: ubuntu-16.04
         run: |
            devtools::install()
@@ -110,7 +112,7 @@ jobs:
            file.rename('.github/.gitignore.deploy', '.gitignore')
 
       - name: Deploy build package
-        runs-on: ubuntu-16.04
+        if: matrix.config.os == 'ubuntu-16.04'
         run: |
           git checkout master
           git add man/\* R/* src/\* README.md NAMESPACE vignettes/*html || echo "No changes to commit"
