@@ -63,7 +63,7 @@ jobs:
       - name: Install dependencies
         run: |
           remotes::install_deps(dependencies = TRUE)
-          remotes::install_cran(c('rcmdcheck', 'devtools', 'roxygen2', 'testthat', 'rmarkdown', 'pkgdown'))
+          remotes::install_cran(c('rcmdcheck', 'devtools', 'roxygen2', 'testthat', 'markdown', 'knitr', 'rmarkdown', 'pkgdown'))
         shell: Rscript {0}
 
       - name: Add auto-generated files
