@@ -113,7 +113,7 @@ jobs:
       - name: Deploy build package
         if: success() && matrix.config.os == 'ubuntu-16.04'
         run: |
-          git checkout master
+          git checkout master || git checkout -b master
           git add man/\* R/* src/\* README.md NAMESPACE vignettes/*html || echo "No changes to commit"
           git commit -m "Add build artifacts" || echo "No changes to commit"
           git push https://${{github.actor}}:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git || echo "No changes to commit"           
