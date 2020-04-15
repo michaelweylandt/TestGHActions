@@ -7,7 +7,7 @@ on:
     branches:
       - devel
 
-name: R-CMD-check
+name: R-CMD-check and Deploy
 
 jobs:
   R-CMD-check:
@@ -114,8 +114,15 @@ jobs:
         if: success() && matrix.config.os == 'ubuntu-16.04'
         run: |
           git checkout master || git checkout -b master
-          git add man/\* R/* src/\* README.md NAMESPACE vignettes/*html || echo "No changes to commit"
+          git add man/* || echo "No doc changes to commit" 
+          git add R/* || echo "No R code changes to commit" 
+          git add src/* || echo "No C++ code changes to commit" 
+          git add README.md || echo "No README changes to commit" 
+          git add NAMESPACE || echo "No NAMESPACE changes to commit" 
+          git add vignettes/*html || echo "No vignette HTML changes to commit"
+          git config user.email "michael.weylandt@gmail.com"
+          git config user.name "${{github.actor}} (Auto-Deploy via GitHub Actions)"
           git commit -m "Add build artifacts" || echo "No changes to commit"
-          git push https://${{github.actor}}:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git || echo "No changes to commit"           
+          git push -f -u https://${{github.actor}}:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git master || echo "No changes to commit"           
 
 
