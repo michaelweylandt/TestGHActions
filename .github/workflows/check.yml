@@ -120,6 +120,8 @@ jobs:
           git add README.md || echo "No README changes to commit" 
           git add NAMESPACE || echo "No NAMESPACE changes to commit" 
           git add vignettes/*html || echo "No vignette HTML changes to commit"
+          git add docs/* || echo "No pkgdown changes to commit"
+          git add .gitignore || echo "No .gitignore changes to commit"
           git config user.email "michael.weylandt@gmail.com"
           git config user.name "${{github.actor}} (Auto-Deploy via GitHub Actions)"
           git commit -m "Add build artifacts" || echo "No changes to commit"
