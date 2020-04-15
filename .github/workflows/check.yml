@@ -104,10 +104,11 @@ jobs:
            devtools::install()
            rmarkdown::render('README.Rmd')
            pkgdown::build_site()
-           unlink('src/*o', force = TRUE)
-           unlink('*Rcheck', force = TRUE, recursive = TRUE)
-           unlink('*tar.gz', force = TRUE)
+           unlink('src/\*o', force = TRUE)
+           unlink('\*Rcheck', force = TRUE, recursive = TRUE)
+           unlink('\*tar.gz', force = TRUE)
            file.rename('.github/.gitignore.deploy', '.gitignore')
+        shell: Rscript {0}
 
       - name: Deploy build package
         if: success() && matrix.config.os == 'ubuntu-16.04'
