@@ -74,7 +74,7 @@ jobs:
           roxygen2::roxygenize()
         shell: Rscript {0}
 
-      - name: Check
+      - name: R CMD check
         env:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
         run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
@@ -86,4 +86,35 @@ jobs:
         with:
           name: ${{ runner.os }}-r${{ matrix.config.r }}-results
           path: check
+
+      - name: Run coverage
+        runs-on: macOS-latest
+        run: |
+           remotes::install_cran('covr')
+           library(covr)
+           flags <- getOption("covr.flags")
+           flags[] <- gsub("-O0 ", "", flags)
+           options(covr.flags=flags)
+           codecov(quiet=FALSE)
+        shell: Rscript {0}
+
+      - name: Clean up build artifacts and render pkgdown site
+        runs-on: ubuntu-16.04
+        run: |
+           devtools::install()
+           rmarkdown::render('README.Rmd')
+           pkgdown::build_site()
+           unlink('src/*o', force = TRUE)
+           unlink('*Rcheck', force = TRUE, recursive = TRUE)
+           unlink('*tar.gz', force = TRUE)
+           file.rename('.github/.gitignore.deploy', '.gitignore')
+
+      - name: Deploy build package
+        runs-on: ubuntu-16.04
+        run: |
+          git checkout master
+          git add man/\* R/* src/\* README.md NAMESPACE vignettes/*html || echo "No changes to commit"
+          git commit -m "Add build artifacts" || echo "No changes to commit"
+          git push https://${{github.actor}}:${{secrets.GITHUB_TOKEN}}@github.com/${{github.repository}}.git || echo "No changes to commit"           
+
 
